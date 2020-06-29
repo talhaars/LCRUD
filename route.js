@@ -5,7 +5,7 @@ const path=require('path');
 const app=express();
 app.use(bodyParser.urlencoded({extended: true}));
 const port=3000;
-app.use('/ststic',express.static('public'));
+app.use('/static',express.static('public'));
 //app.use(express.static(path.join(__dirname,"css")));
 mongoose.connect("mongodb://localhost:27017/accounts", {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -42,7 +42,7 @@ app.get('/login.html',function(req,res){
             phno:req.body.phno
         }
     );
-    user.save(function (err) {
+    user.save(function (err,fluffy) {
         if (err) {
            // return next(err);
            res.sendFile(__dirname+"/forms/login.html");
