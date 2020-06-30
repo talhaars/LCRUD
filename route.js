@@ -28,10 +28,24 @@ const accountSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', accountSchema);
+// app.get("/r/:subredditName/:id",function(req,res){
+// var subre=req.params.subredditName;
+// var idd=Number(req.params.id) ;
+// result="";
+// for(var i=0;i<idd;i++)result+=subre;
+// res.send(result);
+// });
+var uuser={
+    name:"",
+    email:"",
+    password:"",
+    phno:0
+}
 
 app.get('/',function(req,res){
-    res.sendFile(__dirname+"/forms/login.html");  
-})
+   // res.sendFile(__dirname+"/forms/login.html"); 
+   res.render("login.ejs"); 
+});
 app.get('/login.html',function(req,res){
     
     const user = new User(
@@ -42,12 +56,12 @@ app.get('/login.html',function(req,res){
             phno:req.body.phno
         }
     );
-    user.save(function (err,fluffy) {
+    user.save(function (err) {
         if (err) {
            // return next(err);
-           res.sendFile(__dirname+"/forms/login.html");
+           res.render("login.ejs");
         }else{
-            res.sendFile(__dirname+"/forms/login.html");
+            res.render("login.ejs");
         }
        
     })
@@ -56,20 +70,25 @@ app.get('/login.html',function(req,res){
 })
 
 app.post("/",function(req,res){
-    var name=req.body.name;
-    var emaill=req.body.email;
-    var passwor=req.body.password;
+    
 var chk;
     chk = {
-        username: name,
-        password: passwor
+        username: req.body.name,
+        password: req.body.password,
     };
+
+        
+
     User.findOne(chk,function(err,users){
         if(err){
             res.send("try again!");
         }
         if(users){
-            res.sendFile(__dirname+"/forms/next.html");
+            uuser.name= users.username;
+            uuser.email=users.email;
+            uuser.password=users.password;
+            uuser.phno=users.phno;
+            res.render("home.ejs");
         }else{
             res.send("user is not registered!");
         }
@@ -87,10 +106,43 @@ app.get("/signup.html",function(req,res){
     res.sendFile(__dirname+"/forms/signup.html");
 })
 app.get("/update.html",function(req,res){
-    res.sendFile(__dirname+"/forms/update.html");
+    res.render("update.ejs",{useer:uuser});
 })
+app.get("/updated",function(req,res){
+    usernam= req.body.name;
+    emai= req.body.email;
+    passwor= req.body.password;
+    phn=req.body.phno;
+
+console.log(req.body.name);
+    User.updateOne({username:uuser.name,password:uuser.password},{username:usernam,password:passwor,email:emai,phno:phn},function(err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log("updated")
+        }
+        res.render("login.ejs");
+    })
+})
+
 app.get("/delete.html",function(req,res){
-    res.sendFile(__dirname+"/forms/delete.html");
+var chk = {
+        username: uuser.name,
+        password: uuser.password
+    };
+    User.deleteOne(chk,function(err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log("deleted");
+        }
+        res.render("signup.ejs");
+    })
+
+
+    
 })
 app.get("/updated",function(req,res){
     res.send("account updated");
