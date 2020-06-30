@@ -103,7 +103,7 @@ var chk;
 
 
 app.get("/signup.html",function(req,res){
-    res.sendFile(__dirname+"/forms/signup.html");
+    res.render("signup.ejs");
 })
 app.get("/update.html",function(req,res){
     res.render("update.ejs",{useer:uuser});
